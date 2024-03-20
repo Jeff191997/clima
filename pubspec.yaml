@@ -29,3 +29,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/
+
+  fonts:
+    - family: Spartan MB
+      fonts:
+      - asset: fonts/SpartanMB-Black.otf
+        weight: 900
