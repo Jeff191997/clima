@@ -1,5 +1,8 @@
+import 'package:clima/services/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:clima/services/location.dart';
+
+const apiKey = 'f90d2213c98e1bccdd668ca7859f0343';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -7,29 +10,42 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  void getLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      //nothing
-    }
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print(position);
+  double? latitude;
+  double? longitude;
+  void getLocationData() async {
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    latitude = location.latitude;
+    longitude = location.longitude;
+
+    NetworkHelper networkHelper = NetworkHelper(Uri.parse('https://api'
+        '.openweathermap.org/data/2'
+        '.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey'));
+
+    var weatherData = await networkHelper.getData();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getLocationData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            getLocation();
-          },
-          child: Text('Get Location'),
-        ),
-      ),
-    );
+    return Scaffold();
   }
 }
+
+// LocationPermission permission;
+// permission = await Geolocator.checkPermission();
+// permission = await Geolocator.requestPermission();
+// if (permission == LocationPermission.denied) {
+//   //nothing
+// }
+
+// int condition = weatherData['weather'][0]['id'];
+// double temperature = weatherData['main']['temp'];
+// String cityName = weatherData['name'];
